@@ -24,8 +24,10 @@ async fn main() -> Result<()> {
 
     let _config = Config::new().expect("invalid config file");
 
-    let pipeline = pipeline::run();
-    let server = server::run();
+    let cbor_txs_db = storage::in_memory_db::CborTransactionsDb::new();
+
+    let pipeline = pipeline::run(cbor_txs_db.clone());
+    let server = server::run(cbor_txs_db.clone());
 
     try_join!(pipeline, server)?;
 
