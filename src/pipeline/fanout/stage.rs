@@ -4,7 +4,7 @@ use gasket::framework::*;
 use tokio::time::sleep;
 use tracing::info;
 
-use crate::{pipeline::Transaction, storage::in_memory_db::CborTransactionsDb};
+use crate::{pipeline::Transaction, storage::in_memory_db::CborTransactionsDb, Config};
 
 use super::tx_submit_peer_manager::TxSubmitPeerManager;
 
@@ -12,6 +12,7 @@ use super::tx_submit_peer_manager::TxSubmitPeerManager;
 #[stage(name = "fanout", unit = "Transaction", worker = "Worker")]
 pub struct Stage {
     pub cbor_txs_db: CborTransactionsDb,
+    pub config: Config,
 }
 
 pub struct Worker {
@@ -22,11 +23,9 @@ pub struct Worker {
 impl gasket::framework::Worker<Stage> for Worker {
     async fn bootstrap(_stage: &Stage) -> Result<Self, WorkerError> {
         // Load configuration and Start Clients
-        let peer_addresses = vec![
-            "preview-node.play.dev.cardano.org:3001".to_string(),
-            "adaboy-preview-1c.gleeze.com:5000".to_string(),
-            "testicles.kiwipool.org:9720".to_string(),
-        ];
+        let peer_addresses = _stage.config.peer.addrs.clone();
+
+        info!("Peer Addresses: {:?}", peer_addresses);
         
         // Proof of Concept: TxSubmitPeerManager
         // Pass Config Network Magic and Peer Addresses

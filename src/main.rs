@@ -22,11 +22,11 @@ async fn main() -> Result<()> {
         .with(env_filter)
         .init();
 
-    let _config = Config::new().expect("invalid config file");
+    let config = Config::new().expect("invalid config file");
 
     let cbor_txs_db = storage::in_memory_db::CborTransactionsDb::new();
 
-    let pipeline = pipeline::run(cbor_txs_db.clone());
+    let pipeline = pipeline::run(cbor_txs_db.clone(), config);
     let server = server::run(cbor_txs_db.clone());
 
     try_join!(pipeline, server)?;
@@ -35,7 +35,14 @@ async fn main() -> Result<()> {
 }
 
 #[derive(Deserialize)]
-struct Config {}
+struct Peer {
+    addrs: Vec<String>,
+}
+
+#[derive(Deserialize)]
+struct Config {
+    peer: Peer,
+}
 impl Config {
     pub fn new() -> Result<Self, Box<dyn Error>> {
         let config = config::Config::builder()
