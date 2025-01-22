@@ -23,10 +23,10 @@ pub struct Worker {
 impl gasket::framework::Worker<Stage> for Worker {
     async fn bootstrap(_stage: &Stage) -> Result<Self, WorkerError> {
         // Load configuration and Start Clients
-        let peer_addresses = _stage.config.peer.addrs.clone();
+        let peer_addresses = _stage.config.peer_manager.peers.clone();
 
         info!("Peer Addresses: {:?}", peer_addresses);
-        
+
         // Proof of Concept: TxSubmitPeerManager
         // Pass Config Network Magic and Peer Addresses
         let mut tx_submit_peer_manager = TxSubmitPeerManager::new(2, peer_addresses);

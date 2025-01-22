@@ -35,14 +35,15 @@ async fn main() -> Result<()> {
 }
 
 #[derive(Deserialize)]
-struct Peer {
-    addrs: Vec<String>,
+struct PeerManager {
+    peers: Vec<String>,
 }
 
 #[derive(Deserialize)]
 struct Config {
-    peer: Peer,
+    peer_manager: PeerManager,
 }
+
 impl Config {
     pub fn new() -> Result<Self, Box<dyn Error>> {
         let config = config::Config::builder()
