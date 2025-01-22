@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
     let cbor_txs_db = storage::in_memory_db::CborTransactionsDb::new();
 
     let pipeline = pipeline::run(cbor_txs_db.clone(), config);
-    let server = server::run(cbor_txs_db.clone());
+    let server = server::run();
 
     try_join!(pipeline, server)?;
 
